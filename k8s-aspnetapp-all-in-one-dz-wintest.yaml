@@ -1,0 +1,70 @@
+apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
+kind: SecretProviderClass
+metadata:
+  name: azure-kvname
+spec:
+  provider: azure
+  parameters:
+    tenantId: "f32b97f0-efb8-4bc3-91ee-18a6e5f635c9" # the tenant ID of the KeyVault
+    keyvaultName: "ais-dz-k8s-vault"          # the name of the KeyVault    
+    usePodIdentity: "false"         # [OPTIONAL for Azure] if not provided, will default to "false"
+    useVMManagedIdentity: "false"   # [OPTIONAL available for version > 0.0.4] if not provided, will default to "false"
+    userAssignedIdentityID: ""      # [OPTIONAL available for version > 0.0.4] use the client id to specify which user assigned managed identity to use. If using a user assigned identity as the VM's managed identity, then specify the identity's client id. If empty, then defaults to use the system assigned identity on the VM
+    cloudName: ""          # [OPTIONAL available for version > 0.0.4] if not provided, azure environment will default to AzurePublicCloud
+    cloudEnvFileName: ""   # [OPTIONAL available for version > 0.0.7] use to define path to file for populating azure environment
+    objects:  |
+      array:
+        - |
+          objectName: aks-https
+          objectAlias: https.pfx.base64
+          objectType: secret        # object types: secret, key or cert
+          objectFormat: pfx         # for .NET Core 3.1 we want the PFX format
+          objectVersion: ""         # [OPTIONAL] object versions, default to latest if empty
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aks-keyvault-aspnetcore-wintest
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aks-keyvault-aspnetcore-wintest-pod
+  template:
+    metadata:
+      labels:
+        app: aks-keyvault-aspnetcore-wintest-pod
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": windows
+      containers:
+      - name: aks-keyvault-aspnetcore-wintest-pod
+        image: "aisdzcsicr.azurecr.io/aspnet-keyvault-wintest"
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 8080
+        - name: https
+          containerPort: 8443
+        env:
+        - name: HTTPS_CERTIFICATE_PATH
+          value: "K:\\certs\\https.pfx.base64"
+        volumeMounts:
+        - name: aks-keyvault-aspnetcore-wintest-httpscert
+          mountPath: /certs
+          readOnly: true
+        resources:
+          requests:
+            cpu: 250m
+          limits:
+            memory: 500Mi
+            cpu: 1
+      volumes:
+      - name: aks-keyvault-aspnetcore-wintest-httpscert
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: "azure-kvname"
+          nodePublishSecretRef:
+            name: kvcreds
