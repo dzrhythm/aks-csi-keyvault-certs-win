@@ -1,3 +1,7 @@
+# NOTE: The container's Windows Server version must be compatible with
+# the Kubernetes node Windows Server version. Reference:
+# https://docs.microsoft.com/virtualization/windowscontainers/deploy-containers/version-compatibility
+
 FROM mcr.microsoft.com/dotnet/framework/sdk:4.8-windowsservercore-ltsc2019 AS build
 WORKDIR /app
 
