@@ -1,23 +1,28 @@
-# https://hub.docker.com/_/microsoft-dotnet
-FROM mcr.microsoft.com/dotnet/aspnet:3.1 as base
-EXPOSE 8080
-EXPOSE 8443
-ENV ASPNETCORE_URLS "https://+:8443;http://+:8080"
-
-FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
-WORKDIR /source
+FROM mcr.microsoft.com/dotnet/framework/sdk:4.8-windowsservercore-ltsc2019 AS build
+WORKDIR /app
 
 # copy csproj and restore as distinct layers
-COPY aspnetapp/*.csproj ./aspnetapp/
-RUN dotnet restore aspnetapp/*.csproj
+COPY *.sln .
+COPY aspnetmvcapp/*.csproj ./aspnetmvcapp/
+COPY aspnetmvcapp/*.config ./aspnetmvcapp/
+RUN nuget restore
 
 # copy everything else and build app
-COPY aspnetapp/. ./aspnetapp/
-WORKDIR /source/aspnetapp
-RUN dotnet publish -c release -o /app --no-restore
+COPY aspnetmvcapp/. ./aspnetmvcapp/
+WORKDIR /app/aspnetmvcapp
+RUN msbuild /p:Configuration=Release -r:False
 
-# final stage/image
-FROM base as final
-WORKDIR /app
-COPY --from=build /app ./
-ENTRYPOINT ["dotnet", "aspnetapp.dll"]
+
+FROM mcr.microsoft.com/dotnet/framework/aspnet:4.8-windowsservercore-ltsc2019 AS runtime
+WORKDIR /inetpub/wwwroot
+COPY --from=build /app/aspnetmvcapp/. ./
+
+# Uncomment for local container running/debugging
+COPY ./certs ./certs
+
+# Expose HTTPS port
+EXPOSE 443
+
+# Copy the IIS bootstrapping script and set as the entrypoint
+COPY ./Bootstrap-IIS.ps1 ./
+ENTRYPOINT ["powershell.exe", "./Bootstrap-IIS.ps1"]

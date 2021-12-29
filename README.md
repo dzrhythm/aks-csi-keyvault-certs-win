@@ -1,23 +1,23 @@
-# aks-csi-keyvault-certs
+# aks-csi-keyvault-certs-win
 
-Sample for using Azure Key Vault for mounting certificates in containers running
-in Kubernetes, via the
-[Kuberntes CSI Secret Store driver for Azure](https://github.com/Azure/secrets-store-csi-driver-provider-azure).
+Sample for using Azure Key Vault for mounting certificates in  Windows containers running
+in Azure Kubernetes Service, using the
+[Kubernetes CSI Secret Store driver and provider for Azure](https://github.com/Azure/secrets-store-csi-driver-provider-azure).
 
-The basis for the application source comes from the aspnetapp sample application in the
-[Microsoft dotnet docker repo](https://github.com/dotnet/dotnet-docker).
+The application source comes from the
+[aspnetmvcapp](https://github.com/microsoft/dotnet-framework-docker/tree/main/samples/aspnetmvcapp) sample application in the
+[Microsoft .NET Framework Docker repo](https://github.com/microsoft/dotnet-framework-docker).
 
 This code is for demonstration purposes only and is not intended for production.
 
 ## Requirements
 
-- [.NET Core 3.1 SDK](https://dotnet.microsoft.com/download/dotnet-core/3.1)
-- [Docker](https://www.docker.com/products/docker-desktop)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop)
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
 - [Helm](https://helm.sh) 3 or later.
 - A [Microsoft Azure account](https://azure.microsoft.com/en-us/free/).
-- Recommended: [Visual Studio Code](https://code.visualstudio.com/)
-  with the Docker and Kubernetes extensions.
+- [Microsoft Visual Studio](https://visualstudio.microsoft.com/)
+- Optional: [Visual Studio Code](https://code.visualstudio.com/) with the Docker and Kubernetes extensions.
 
 ## Local Debugging
 

@@ -6,19 +6,20 @@ spec:
   provider: azure
   parameters:
     tenantId: "f32b97f0-efb8-4bc3-91ee-18a6e5f635c9" # the tenant ID of the KeyVault
-    keyvaultName: "ais-dz-k8s-vault"          # the name of the KeyVault    
-    usePodIdentity: "false"         # [OPTIONAL for Azure] if not provided, will default to "false"
-    useVMManagedIdentity: "false"   # [OPTIONAL available for version > 0.0.4] if not provided, will default to "false"
-    userAssignedIdentityID: ""      # [OPTIONAL available for version > 0.0.4] use the client id to specify which user assigned managed identity to use. If using a user assigned identity as the VM's managed identity, then specify the identity's client id. If empty, then defaults to use the system assigned identity on the VM
-    cloudName: ""          # [OPTIONAL available for version > 0.0.4] if not provided, azure environment will default to AzurePublicCloud
-    cloudEnvFileName: ""   # [OPTIONAL available for version > 0.0.7] use to define path to file for populating azure environment
+    keyvaultName: "ais-dz-k8s-vault"                 # the name of the KeyVault
+    usePodIdentity: "false"
+    useVMManagedIdentity: "false"
+    userAssignedIdentityID: ""
+    cloudName: ""
+    cloudEnvFileName: ""
     objects:  |
       array:
         - |
           objectName: aks-https
           objectAlias: https.pfx.base64
           objectType: secret        # object types: secret, key or cert
-          objectFormat: pfx         # for .NET Core 3.1 we want the PFX format
+          objectFormat: pfx         # for .NET we want the PFX format
+          objectEncoding: base64
           objectVersion: ""         # [OPTIONAL] object versions, default to latest if empty
 ---
 apiVersion: apps/v1
@@ -43,9 +44,9 @@ spec:
         imagePullPolicy: Always
         ports:
         - name: http
-          containerPort: 8080
+          containerPort: 80
         - name: https
-          containerPort: 8443
+          containerPort: 443
         env:
         - name: HTTPS_CERTIFICATE_PATH
           value: "C:\\certs\\https.pfx.base64"
@@ -55,7 +56,7 @@ spec:
           readOnly: true
         resources:
           requests:
-            cpu: 250m
+            cpu: 500m
           limits:
             memory: 500Mi
             cpu: 1
