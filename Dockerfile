@@ -16,16 +16,15 @@ COPY aspnetmvcapp/. ./aspnetmvcapp/
 WORKDIR /app/aspnetmvcapp
 RUN msbuild /p:Configuration=Release -r:False
 
-
 FROM mcr.microsoft.com/dotnet/framework/aspnet:4.8-windowsservercore-ltsc2019 AS runtime
 WORKDIR /inetpub/wwwroot
 COPY --from=build /app/aspnetmvcapp/. ./
 
-# Uncomment for local container running/debugging
-COPY ./certs ./certs
-
 # Expose HTTPS port
 EXPOSE 443
+
+# This is for local container running/debugging and is not needed for AKS deployment
+COPY ./certs ./certs
 
 # Copy the IIS bootstrapping script and set as the entrypoint
 COPY ./Bootstrap-IIS.ps1 ./
