@@ -3,8 +3,6 @@
 # To run lines individually in a PowerShell integrated termainal
 # in VS Code, place the cursor on the line and press F8.
 
-#[Environment]::SetEnvironmentVariable("HELM_EXPERIMENTAL_OCI", 1, [EnvironmentVariableTarget]::Process)
-
 $resourceGroup = "aisdz-aks-win"
 $location =      "EastUS"
 $aksName =       "ais-dz-aks-win"
@@ -49,14 +47,14 @@ az aks nodepool add `
     --name $winNodePool `
     --node-count 1
 
-# Get credeentials for kubectl
+# Get credentials for kubectl
 az aks get-credentials --resource-group "$resourceGroup" --name "$aksName"
 
 # Docker build
 docker build --rm --pull -f Dockerfile -t $imageName .
 
 # Docker run locally to test
-docker run --name aspnet_test --rm -it -p 8000:80 -p 8443:443 -e "HTTPS_CERTIFICATE_PATH=certs/locahost.pfx.base64" aspnet-keyvault-win
+docker run --name aspnet-keyvault-test --rm -it -p 8000:80 -p 8443:443 -e "HTTPS_CERTIFICATE_PATH=.\certs\localhost.nopwd.pfx" aspnet-keyvault-win
 
 # Tag and push the image to the ACR
 docker tag $imageName "$acrName.azurecr.io/$imageName"

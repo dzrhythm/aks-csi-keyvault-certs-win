@@ -350,4 +350,4 @@ MigrationBackup/
 .ionide/
 
 # include sample pfx
-!**/certs/localhost.pfx
+!**/certs/localhost*.pfx
