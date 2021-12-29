@@ -13,18 +13,11 @@ This code is for demonstration purposes only and is not intended for production.
 ## Requirements
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop)
-- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
+- [Azure CLI](https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest)
 - [Helm](https://helm.sh) 3 or later.
-- A [Microsoft Azure account](https://azure.microsoft.com/en-us/free/).
+- A [Microsoft Azure account](https://azure.microsoft.com/free/).
 - [Microsoft Visual Studio](https://visualstudio.microsoft.com/)
 - Optional: [Visual Studio Code](https://code.visualstudio.com/) with the Docker and Kubernetes extensions.
-
-## Local Debugging
-
-You can run and debug locally in Docker, simulating the certificate mount, by using
-Visual Studio Code and using the `Docker .NET Core Launch` target in
-[.vscode\launch.json](.vscode\launch.json) to run. The required Docker configuration
-is in [.vscode\tasks.json](.vscode\tasks.json).
 
 ## Deploying to AKS
 
@@ -37,23 +30,23 @@ See [AKS-Deploy.ps1](AKS-Deploy.ps1) for example Azure CLI commands
 for most of these steps. To run this sample in AKS:
 
 1. Create a self-signed private key certificate, or use the sample one included in this repo:
-   [aspnetapp\certs\localhost.pfx](aspnetapp\certs\localhost.pfx).
+   [certs\localhost.pfx](certs\localhost.pfx).
    (Password: `abcdefghijklmnopqrstuvwxyz0123456789`).
 
-2. Create an [Azure Key Vault](https://azure.microsoft.com/en-us/services/key-vault/)
+2. Create an [Azure Key Vault](https://azure.microsoft.com/services/key-vault/)
    in your subscription.
 
 3. Import the certificate into your Key Vault using the name "aks-https".
 
-4. Create an [Azure Container Registry (ACR)](https://azure.microsoft.com/en-us/services/container-registry/).
+4. Create an [Azure Container Registry (ACR)](https://azure.microsoft.com/services/container-registry/).
 
 5. Build a Docker image of the app using the [Dockerfile](Dockerfile),
    then tag and push the image to your registry.
 
-6. Create an [Azure Kubernetes Service (AKS)](https://azure.microsoft.com/en-us/services/kubernetes-service/)
+6. Create an [Azure Kubernetes Service (AKS)](https://azure.microsoft.com/services/kubernetes-service/)
    cluster attached to your ACR.
 
-7. Create an [app registration](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
+7. Create an [app registration](https://docs.microsoft.com/azure/active-directory/develop/quickstart-register-app)
    in Azure Active Directory (AAD) to use as a service principal. Get the client ID,
    then generate and save a secret to use.
 
@@ -70,7 +63,7 @@ for most of these steps. To run this sample in AKS:
 
     `helm repo add csi-secrets-store-provider-azure https://raw.githubusercontent.com/Azure/secrets-store-csi-driver-provider-azure/master/charts`
 
-    `helm install csi-secrets-store-provider-azure/csi-secrets-store-provider-azure --generate-name`
+    `helm install csi-secrets-store-provider-azure/csi-secrets-store-provider-azure --generate-name --set windows.enabled=true --set=secrets-store-csi-driver.windows.enabled=true --namespace kube-system`
 
 
 12. Using the AAD registration client id and secret, create a Kubernetes Secret Key Vault credentials, substituting your CLIENTID and CLIENTSECRET:
@@ -94,5 +87,5 @@ for most of these steps. To run this sample in AKS:
 
 ## Notes
 
-The [aspnetapp/certs](aspnetapp/certs) folder has self-signed localhost certificates for
+The [certs](certs) folder has self-signed localhost certificates for
 development and testing. Of course these are not meant for production use :-).
