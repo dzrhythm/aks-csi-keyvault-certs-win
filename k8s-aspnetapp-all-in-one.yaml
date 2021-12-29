@@ -19,8 +19,8 @@ spec:
           objectAlias: https.pfx
           objectType: secret        # object types: secret, key or cert
           objectFormat: pfx         # for .NET we want the PFX format
-          objectEncoding: base64    # ask the driver to decode the base64 content so we get a binary PFX
-          objectVersion: ""         # [OPTIONAL] object versions, default to latest if empty
+          objectEncoding: base64    # configure the provider to decode the base64 content so we get a binary PFX
+          objectVersion: ""         # [OPTIONAL] object version, default to latest if empty
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -37,6 +37,7 @@ spec:
         app: aks-keyvault-aspnetcore-win-pod
     spec:
       nodeSelector:
+        # ensure this deployment is scheduled on Windows nodes
         "beta.kubernetes.io/os": windows
       containers:
       - name: aks-keyvault-aspnetcore-win-pod

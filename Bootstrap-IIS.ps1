@@ -5,18 +5,18 @@
 # which we can set so the driver decodes the file to binary for us.
 #
 # Base64 decode the mounted certificate to a PFX file
-# $decodedCertPath = "$PSScriptRoot\locahost.decoded.pfx"
+# $certFilePath = "$PSScriptRoot\locahost.decoded.pfx"
 # Write-Host "Getting cert content from $($env:HTTPS_CERTIFICATE_PATH)"
 # $content = Get-Content $env:HTTPS_CERTIFICATE_PATH -Raw
-# Write-Host "Converting cert and writing to $decodedCertPath"
-# [System.Convert]::FromBase64String($content) | Set-Content $decodedCertPath -Encoding Byte
+# Write-Host "Converting cert and writing to $certFilePath"
+# [System.Convert]::FromBase64String($content) | Set-Content $certFilePath -Encoding Byte
 
 # Import the PFX to the Windows certificate store
 # Note that the mounted PFX certificate no longer has a password
 # since we've already authenticated to Key Vault.
-$decodedCertPath = $env:HTTPS_CERTIFICATE_PATH
-Write-Host "Importing HTTPS certificate $decodedCertPath"
-$cert = Import-PfxCertificate -FilePath $decodedCertPath -CertStoreLocation Cert:\LocalMachine\My
+$certFilePath = $env:HTTPS_CERTIFICATE_PATH
+Write-Host "Importing HTTPS certificate $certFilePath"
+$cert = Import-PfxCertificate -FilePath $certFilePath -CertStoreLocation Cert:\LocalMachine\My
 
 Write-Host "Creating HTTPS Binding"
 New-WebBinding -Name "Default Web Site" -IP "*" -Port 443 -Protocol https

@@ -60,7 +60,7 @@ docker run --name aspnet-keyvault-test --rm -it -p 8000:80 -p 8443:443 -e "HTTPS
 docker tag $imageName "$acrName.azurecr.io/$imageName"
 docker push "$acrName.azurecr.io/$imageName"
 
-# Key Vault
+# Key Vault: Allow our AAD app id registration access to the vault's secrets
 az keyvault set-policy -n "$keyVaultName" --secret-permissions get --spn "$clientID"
 
 # (import the PFX to Key Vault as per the README.md)
