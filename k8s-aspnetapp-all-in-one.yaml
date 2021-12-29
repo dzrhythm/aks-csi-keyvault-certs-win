@@ -5,8 +5,8 @@ metadata:
 spec:
   provider: azure
   parameters:
-    tenantId: "f32b97f0-efb8-4bc3-91ee-18a6e5f635c9" # the tenant ID of the KeyVault
-    keyvaultName: "ais-dz-k8s-vault"                 # the name of the KeyVault
+    tenantId: ""                 # the tenant ID of the KeyVault
+    keyvaultName: ""             # the name of the KeyVault
     usePodIdentity: "false"
     useVMManagedIdentity: "false"
     userAssignedIdentityID: ""
@@ -40,7 +40,7 @@ spec:
         "beta.kubernetes.io/os": windows
       containers:
       - name: aks-keyvault-aspnetcore-win-pod
-        image: "aisdzcsicr.azurecr.io/aspnet-keyvault-win"
+        image: "[YOUR-ACR-NAME].azurecr.io/aspnet-keyvault-win"
         imagePullPolicy: Always
         ports:
         - name: http

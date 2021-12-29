@@ -3,18 +3,18 @@
 # To run lines individually in a PowerShell integrated termainal
 # in VS Code, place the cursor on the line and press F8.
 
-$resourceGroup = "aisdz-aks-win"
+$resourceGroup = ""
 $location =      "EastUS"
-$aksName =       "ais-dz-aks-win"
-$acrName =       "aisdzcsicr"
-$keyVaultName =  "ais-dz-k8s-vault"
-$imageName =     "aspnet-keyvault-win"
+$aksName =       ""
+$acrName =       ""
+$keyVaultName =  ""
+$imageName =     ""
 # Azure Active Directory app registration client id and secret for authenticating to Key Vault
-$clientID =      "2065926b-4730-40f3-9345-94af9698b03c"
-$clientSecret =  "5bS-0LmE5m4iW_4tXrVl_Tz3_NEYltB50G"
+$clientID =      ""
+$clientSecret =  ""
 # Windows node settings
-$winUser = "dz"
-$winPwd = "Thisismystrongpassword123!"
+$winUser = ""
+$winPwd = ""
 $winNodePool = "npwin"
 
 az login
@@ -77,5 +77,6 @@ kubectl apply -f k8s-aspnetapp-all-in-one-dz-win.yaml
 
 kubectl get pods,services
 
-# delete the cluster when done
+# stop or delete the cluster when done
+az aks stop --name "$aksName" --resource-group "$resourceGroup"
 az aks delete --name "$aksName" --resource-group "$resourceGroup" --yes --no-wait
