@@ -31,10 +31,9 @@ az aks create `
     --resource-group $resourceGroup `
     --name $aksName `
     --node-count 2 `
-    --enable-addons monitoring `
     --generate-ssh-keys `
-    --windows-admin-username $winUser `
-    --windows-admin-password $winPwd `
+    --windows-admin-username "$winUser" `
+    --windows-admin-password "$winPwd" `
     --vm-set-type VirtualMachineScaleSets `
     --network-plugin azure `
     --attach-acr "$acrName"
@@ -53,8 +52,8 @@ az aks get-credentials --resource-group "$resourceGroup" --name "$aksName"
 # Docker build
 docker build --rm --pull -f Dockerfile -t $imageName .
 
-# Docker run locally to test
-docker run --name aspnet-keyvault-test --rm -it -p 8000:80 -p 8443:443 -e "HTTPS_CERTIFICATE_PATH=.\certs\localhost.nopwd.pfx" aspnet-keyvault-win
+# Docker run locally to test, browse to https://localhost:8443/
+docker run --name aspnet-keyvault-test --rm -it -p 8000:80 -p 8443:443 -e "HTTPS_CERTIFICATE_PATH=.\certs\localhost.nopwd.pfx" $imageName
 
 # Tag and push the image to the ACR
 docker tag $imageName "$acrName.azurecr.io/$imageName"
@@ -73,7 +72,7 @@ helm install csi-secrets-store-provider-azure/csi-secrets-store-provider-azure -
 kubectl create secret generic kvcreds --from-literal "clientid=$clientID" --from-literal "clientsecret=$clientSecret"
 
 # Create the deployment
-kubectl apply -f k8s-aspnetapp-all-in-one-dz-win.yaml
+kubectl apply -f k8s-aspnetapp-all-in-one.yaml
 
 kubectl get pods,services
 

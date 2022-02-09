@@ -40,11 +40,11 @@ for most of these steps. To run this sample in AKS:
 
 4. Create an [Azure Container Registry (ACR)](https://azure.microsoft.com/services/container-registry/).
 
-5. Build a Docker image of the app using the [Dockerfile](Dockerfile),
-   then tag and push the image to your registry.
+5. Rember to switch Docker Desktop to Windows Containers. Build a Docker image of the app using the
+   [Dockerfile](Dockerfile), then tag and push the image to your registry.
 
 6. Create an [Azure Kubernetes Service (AKS)](https://azure.microsoft.com/services/kubernetes-service/)
-   cluster attached to your ACR.
+   cluster attached to your ACR. Next create a Windows node pool.
 
 7. Create an [app registration](https://docs.microsoft.com/azure/active-directory/develop/quickstart-register-app)
    in Azure Active Directory (AAD) to use as a service principal. Get the client ID,
@@ -65,7 +65,6 @@ for most of these steps. To run this sample in AKS:
 
     `helm install csi-secrets-store-provider-azure/csi-secrets-store-provider-azure --generate-name --set windows.enabled=true --set=secrets-store-csi-driver.windows.enabled=true --namespace kube-system`
 
-
 12. Using the AAD registration client id and secret, create a Kubernetes Secret Key Vault credentials, substituting your CLIENTID and CLIENTSECRET:
 
     `kubectl create secret generic kvcreds --from-literal clientid=<CLIENTID> --from-literal clientsecret=<CLIENTSECRET>`
@@ -82,7 +81,7 @@ for most of these steps. To run this sample in AKS:
 
     `kubectl get service aks-keyvault-aspnetcore-svc`
 
-    Get the EXTERNAL-IP and browse to it using https://YOUR-IP
+    Get the EXTERNAL-IP and browse to it using `https://YOUR-IP`
     (you will probably need to bypass the warning about the self-signed cert).
 
 ## Notes
