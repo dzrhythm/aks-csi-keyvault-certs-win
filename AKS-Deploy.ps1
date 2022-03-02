@@ -66,7 +66,7 @@ az keyvault set-policy -n "$keyVaultName" --secret-permissions get --spn "$clien
 
 # Install the CSI secret driver and provider with Windows enabled
 helm repo add csi-secrets-store-provider-azure https://raw.githubusercontent.com/Azure/secrets-store-csi-driver-provider-azure/master/charts
-helm install csi-secrets-store-provider-azure/csi-secrets-store-provider-azure --generate-name --set windows.enabled=true --set=secrets-store-csi-driver.windows.enabled=true --namespace kube-system
+helm install csi-secrets-store csi-secrets-store-provider-azure/csi-secrets-store-provider-azure --set windows.enabled=true --set=secrets-store-csi-driver.windows.enabled=true --namespace kube-system
 
 # Create the secret for Key Vault credentials
 kubectl create secret generic kvcreds --from-literal "clientid=$clientID" --from-literal "clientsecret=$clientSecret"

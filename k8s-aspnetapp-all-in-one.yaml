@@ -1,7 +1,12 @@
+# Before applying, be sure to make these updates:
+# * Update the SecretProviderClass with your
+#    - tenantId
+#    - keyvaultName
+# * Update the container image to match your ACR and image tag
 apiVersion: secrets-store.csi.x-k8s.io/v1
 kind: SecretProviderClass
 metadata:
-  name: azure-kvname
+  name: azure-kv-certs
 spec:
   provider: azure
   parameters:
@@ -20,27 +25,26 @@ spec:
           objectType: secret        # object types: secret, key or cert
           objectFormat: pfx         # for .NET we want the PFX format
           objectEncoding: base64    # configure the provider to decode the base64 content so we get a binary PFX
-          objectVersion: ""         # [OPTIONAL] object version, default to latest if empty
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: aks-keyvault-aspnetcore-win
+  name: aks-kv-aspnet-win-dep
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: aks-keyvault-aspnetcore-win-pod
+      app: aks-kv-aspnet-win-pod
   template:
     metadata:
       labels:
-        app: aks-keyvault-aspnetcore-win-pod
+        app: aks-kv-aspnet-win-pod
     spec:
       nodeSelector:
         # ensure this deployment is scheduled on Windows nodes
         "beta.kubernetes.io/os": windows
       containers:
-      - name: aks-keyvault-aspnetcore-win-pod
+      - name: app
         image: "[YOUR-ACR-NAME].azurecr.io/aspnet-keyvault-win"
         imagePullPolicy: Always
         ports:
@@ -52,7 +56,7 @@ spec:
         - name: HTTPS_CERTIFICATE_PATH
           value: "C:\\certs\\https.pfx"
         volumeMounts:
-        - name: aks-keyvault-aspnetcore-win-httpscert
+        - name: aks-kv-aspnet-win-httpscert
           mountPath: /certs
           readOnly: true
         resources:
@@ -62,19 +66,19 @@ spec:
             memory: 500Mi
             cpu: 1
       volumes:
-      - name: aks-keyvault-aspnetcore-win-httpscert
+      - name: aks-kv-aspnet-win-httpscert
         csi:
           driver: secrets-store.csi.k8s.io
           readOnly: true
           volumeAttributes:
-            secretProviderClass: "azure-kvname"
+            secretProviderClass: "azure-kv-certs"
           nodePublishSecretRef:
             name: kvcreds
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: aks-keyvault-aspnetcore-win-svc
+  name: aks-kv-aspnet-win-svc
 spec:
   type: LoadBalancer
   ports:
@@ -85,4 +89,4 @@ spec:
     port: 443
     targetPort: https
   selector:
-    app: aks-keyvault-aspnetcore-win-pod
+    app: aks-kv-aspnet-win-pod
