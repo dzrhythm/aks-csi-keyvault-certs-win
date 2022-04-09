@@ -65,7 +65,7 @@ az keyvault set-policy -n "$keyVaultName" --secret-permissions get --spn "$clien
 # (import the PFX to Key Vault as per the README.md)
 
 # Install the CSI secret driver and provider with Windows enabled
-helm repo add csi-secrets-store-provider-azure https://raw.githubusercontent.com/Azure/secrets-store-csi-driver-provider-azure/master/charts
+helm repo add csi-secrets-store-provider-azure https://azure.github.io/secrets-store-csi-driver-provider-azure/charts
 helm install csi-secrets-store csi-secrets-store-provider-azure/csi-secrets-store-provider-azure --set windows.enabled=true --set secrets-store-csi-driver.windows.enabled=true --namespace kube-system
 
 # Create the secret for Key Vault credentials
