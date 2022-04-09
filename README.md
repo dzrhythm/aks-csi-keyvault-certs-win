@@ -61,7 +61,7 @@ for most of these steps. To run this sample in AKS:
 
 11. Deploy CSI Secret Store driver and provider for Azure to your cluster:
 
-    `helm repo add csi-secrets-store-provider-azure https://raw.githubusercontent.com/Azure/secrets-store-csi-driver-provider-azure/master/charts`
+    `helm repo add csi-secrets-store-provider-azure https://azure.github.io/secrets-store-csi-driver-provider-azure/charts`
 
     `helm install csi-secrets-store-provider-azure/csi-secrets-store-provider-azure --generate-name --set windows.enabled=true --set=secrets-store-csi-driver.windows.enabled=true --namespace kube-system`
 
